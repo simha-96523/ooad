@@ -1,0 +1,48 @@
+#include <stdio.h>
+
+int main() {
+    int n = 4, m = 3;
+    int claim_matrix[4][3] = {{3, 2, 2}, {6, 1, 3}, {3, 1, 4}, {4, 2, 2}};
+    int allocation_matrix[4][3] = {{1, 0, 0}, {6, 1, 2}, {2, 1, 1}, {0, 0, 2}};
+    int resource_vector[3] = {9, 3, 6};
+    int work[m], finish[n], safe_sequence[n], count = 0;
+    for (int i = 0; i < m; i++) {
+        work[i] = resource_vector[i];
+    }
+    for (int i = 0; i < n; i++) {
+        finish[i] = 0;
+    }
+    while (count < n) {
+        int found = 0;
+        for (int i = 0; i < n; i++) {
+            if (!finish[i]) {
+                int j;
+                for (j = 0; j < m; j++) {
+                    if (claim_matrix[i][j] - allocation_matrix[i][j] > work[j]) {
+                        break;
+                    }
+                }
+                if (j == m) {
+                    for (int k = 0; k < m; k++) {
+                        work[k] += allocation_matrix[i][k];
+                    }
+                    finish[i] = 1;
+                    safe_sequence[count] = i;
+                    count++;
+                    found = 1;
+                }
+            }
+        }
+        if (!found) {
+            printf("System is in unsafe state.\n");
+            return 0;
+        }
+    }
+    printf("System is in safe state.\n");
+    printf("Safe sequence: ");
+    for (int i = 0; i < n; i++) {
+        printf("P%d ", safe_sequence[i]);
+    }
+    printf("\n");
+    return 0;
+}
