@@ -1,0 +1,46 @@
+#include <stdio.h>
+
+void srpt(int n, int arrival_time[], int burst_time[]) {
+    int remaining_time[n], waiting_time[n], turnaround_time[n], complete_time = 0, t = 0;
+    float avg_waiting_time = 0.0, avg_turnaround_time = 0.0;
+    for (int i = 0; i < n; i++) {
+        remaining_time[i] = burst_time[i];
+    }
+    while (1) {
+        int shortest_job_index = -1, min_remaining_time = 100000;
+        for (int i = 0; i < n; i++) {
+            if (arrival_time[i] <= t && remaining_time[i] < min_remaining_time && remaining_time[i] > 0) {
+                shortest_job_index = i;
+                min_remaining_time = remaining_time[i];
+            }
+        }
+        if (shortest_job_index == -1) {
+            t++;
+            continue;
+        }
+        remaining_time[shortest_job_index]--;
+        if (remaining_time[shortest_job_index] == 0) {
+            complete_time = t+1;
+            turnaround_time[shortest_job_index] = complete_time - arrival_time[shortest_job_index];
+            waiting_time[shortest_job_index] = turnaround_time[shortest_job_index] - burst_time[shortest_job_index];
+        }
+        t++;
+        if (t == complete_time) {
+            break;
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        avg_waiting_time += waiting_time[i];
+        avg_turnaround_time += turnaround_time[i];
+    }
+    avg_waiting_time /= n;
+    avg_turnaround_time /= n;
+    printf("Average waiting time: %f\n", avg_waiting_time);
+    printf("Average turnaround time: %f\n", avg_turnaround_time);
+}
+
+int main() {
+    int n = 4, arrival_time[] = {0, 1, 2, 4}, burst_time[] = {5, 3, 3, 1};
+    srpt(n, arrival_time, burst_time);
+    return 0;
+}
