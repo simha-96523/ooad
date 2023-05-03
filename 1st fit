@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+void first_fit(int memory[], int n, int process[], int m) {
+    int allocation[m];
+    for (int i = 0; i < m; i++) {
+        allocation[i] = -1;
+        for (int j = 0; j < n; j++) {
+            if (memory[j] >= process[i]) {
+                allocation[i] = j;
+                memory[j] -= process[i];
+                break;
+            }
+        }
+    }
+    printf("Process No.\tProcess Size\tPartition No.\n");
+    for (int i = 0; i < m; i++) {
+        printf("%d\t\t%d\t\t", i+1, process[i]);
+        if (allocation[i] != -1) {
+            printf("%d\n", allocation[i]+1);
+        } else {
+            printf("Not Allocated\n");
+        }
+    }
+}
+
+int main() {
+    int n = 6, memory[] = {300, 600, 350, 200, 750, 125};
+    int m = 5, process[] = {115, 500, 358, 200, 375};
+    first_fit(memory, n, process, m);
+    return 0;
+}
