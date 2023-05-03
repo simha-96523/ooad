@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+void sjf(int n, int burst_time[]) {
+    int waiting_time[n], turnaround_time[n], complete_time = 0, t = 0;
+    float avg_waiting_time = 0.0, avg_turnaround_time = 0.0;
+    for (int i = 0; i < n; i++) {
+        int min_burst_time = 100000;
+        int shortest_job_index = 0;
+        for (int j = 0; j < n; j++) {
+            if (burst_time[j] < min_burst_time && burst_time[j] > 0) {
+                min_burst_time = burst_time[j];
+                shortest_job_index = j;
+            }
+        }
+        complete_time += burst_time[shortest_job_index];
+        turnaround_time[shortest_job_index] = complete_time;
+        waiting_time[shortest_job_index] = turnaround_time[shortest_job_index] - burst_time[shortest_job_index];
+        burst_time[shortest_job_index] = 100000;
+    }
+    for (int i = 0; i < n; i++) {
+        avg_waiting_time += waiting_time[i];
+        avg_turnaround_time += turnaround_time[i];
+    }
+    avg_waiting_time /= n;
+    avg_turnaround_time /= n;
+    printf("Average waiting time: %f\n", avg_waiting_time);
+    printf("Average turnaround time: %f\n", avg_turnaround_time);
+}
+
+int main() {
+    int n = 4, burst_time[] = {6, 8, 7, 3};
+    sjf(n, burst_time);
+    return 0;
+}
