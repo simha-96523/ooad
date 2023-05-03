@@ -1,0 +1,58 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 10
+#define MAX_REFERENCES 50
+
+int frames[MAX_FRAMES];
+int referenceString[MAX_REFERENCES];
+
+int findLRUIndex(int time[], int n) {
+    int i, minimum = time[0], lruIndex = 0;
+    for (i = 1; i < n; ++i) {
+        if (time[i] < minimum) {
+            minimum = time[i];
+            lruIndex = i;
+        }
+    }
+    return lruIndex;
+}
+
+int main() {
+    int numFrames, numReferences, i, j, pageFaults = 0, time[MAX_FRAMES] = {0};
+
+    printf("Enter the number of page frames: ");
+    scanf("%d", &numFrames);
+
+    printf("Enter the number of page references: ");
+    scanf("%d", &numReferences);
+
+    printf("Enter the page reference sequence: ");
+    for (i = 0; i < numReferences; ++i) {
+        scanf("%d", &referenceString[i]);
+    }
+
+    for (i = 0; i < numFrames; ++i) {
+        frames[i] = -1; // initialize frames to -1 to indicate they are empty
+    }
+
+    for (i = 0; i < numReferences; ++i) {
+        int page = referenceString[i];
+        int pageFound = 0;
+        for (j = 0; j < numFrames; ++j) {
+            if (frames[j] == page) {
+                pageFound = 1;
+                break;
+            }
+        }
+        if (!pageFound) {
+            int oldestPageIndex = findLRUIndex(time, numFrames);
+            frames[oldestPageIndex] = page;
+            time[oldestPageIndex] = i + 1; // update the time the frame was last used
+            pageFaults++;
+        }
+    }
+
+    printf("Number of page faults: %d\n", pageFaults);
+
+    return 0;
+}
